@@ -37,9 +37,8 @@
       font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
     }
     .important-events::before { content: ""; position: absolute; top: 0; left: 0; width: 76px; height: 2px; background: linear-gradient(90deg, var(--important-events-cyan), transparent); pointer-events: none; }
-    .important-events__header { height: 50px; flex: 0 0 50px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 16px; border-bottom: 1px solid rgba(112, 181, 220, .14); }
+    .important-events__header { height: 50px; flex: 0 0 50px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid rgba(112, 181, 220, .14); }
     .important-events__title { margin: 0; color: var(--important-events-text-primary); font-size: 22px; font-weight: 600; letter-spacing: 1px; line-height: 1; }
-    .important-events__hint { color: var(--important-events-text-muted); font-size: 12px; white-space: nowrap; }
     .important-events__viewport { flex: 1; min-height: 0; overflow: hidden; padding: 0 14px; }
     .important-events__track { will-change: transform; }
     .important-events__item { height: 62px; display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 7px 2px; border-bottom: 1px dashed rgba(111, 182, 221, .18); color: inherit; text-decoration: none; transition: background-color .18s ease, transform .18s ease; }
@@ -59,7 +58,6 @@
     @media (max-width: 560px) {
       .module-preview__frame { width: 100%; }
       .important-events__title { font-size: 18px; }
-      .important-events__hint { display: none; }
       .important-events__item { grid-template-columns: 30px minmax(0, 1fr); }
       .important-events__date { display: none; }
     }
@@ -84,8 +82,8 @@
         root: null, viewport: null, track: null, data: [], observer: null,
         animationFrame: null, paused: false, offset: 0, lastTimestamp: null,
         itemHeight: 62,
-        // 连续滚动速度，单位 px/s。需要更慢或更快时只调整此值。
-        speed: 12,
+        // 连续滚动速度，单位 px/s。
+        speed: 14,
 
         init(container, data) {
           this.destroy();
@@ -94,7 +92,6 @@
           this.root.innerHTML = `
             <header class="important-events__header">
               <h2 class="important-events__title">重要协同事件</h2>
-              <span class="important-events__hint">悬停暂停 · 点击查看原文</span>
             </header>
             <div class="important-events__viewport" aria-live="polite"></div>`;
           this.viewport = this.root.querySelector('.important-events__viewport');
@@ -118,7 +115,6 @@
             return;
           }
           const html = this.data.map((item, index) => this._itemHtml(item, index)).join('');
-          // 复制一份列表：第一份完全离开视口后立即回绕，视觉上保持连续无缝。
           this.viewport.innerHTML = `<div class="important-events__track">${html}${html}</div>`;
           this.track = this.viewport.firstElementChild;
           this.resize();
