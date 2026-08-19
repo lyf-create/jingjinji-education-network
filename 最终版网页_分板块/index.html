@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>京津冀教育协同发展监测</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/panels.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="modules/stage-share/stage-share.css">
+</head>
+<body>
+  <main class="dashboard-shell" aria-label="京津冀教育协同发展监测平台">
+    <header class="dashboard-header">
+      <div class="dashboard-header__title-wrap">
+        <p class="dashboard-header__eyebrow">BEIJING · TIANJIN · HEBEI EDUCATION COLLABORATION</p>
+        <h1>京津冀教育协同发展监测</h1>
+      </div>
+      <p class="dashboard-header__updated">数据更新日期：<time id="data-updated-at" datetime="2026-08-19">2026-08-19</time></p>
+    </header>
+    <section class="dashboard-grid" aria-label="协同发展监测板块">
+      <section id="panel-activity-index" class="dashboard-panel panel-activity-index" data-module="activity-index"><header class="panel-header"><h2 class="panel-title">活跃度指数</h2><div class="panel-actions"></div></header><div class="panel-body"><div class="chart-container"><div class="panel-placeholder">模块开发中<small>活动指数模块将接入此处</small></div></div></div></section>
+      <section id="panel-education-index" class="dashboard-panel panel-education-index" data-module="education-index"><header class="panel-header"><h2 class="panel-title">教育发展指数</h2><div class="panel-actions"></div></header><div class="panel-body"><div class="chart-container"><div class="panel-placeholder">模块开发中<small>教育发展指数模块将接入此处</small></div></div></div></section>
+      <section id="panel-coordination-index" class="dashboard-panel panel-coordination-index" data-module="coordination-index"><header class="panel-header"><h2 class="panel-title">协同度指数</h2><div class="panel-actions"></div></header><div class="panel-body"><div class="chart-container"><div class="panel-placeholder">模块开发中<small>协同度指数模块将接入此处</small></div></div></div></section>
+      <section id="panel-activity-share" class="dashboard-panel panel-activity-share" data-module="activity-share"><header class="panel-header"><h2 class="panel-title">五类协同活跃度占比</h2><div class="panel-actions"></div></header><div class="panel-body"><div class="chart-container"><div class="panel-placeholder">模块开发中<small>协同活跃度结构模块将接入此处</small></div></div></div></section>
+      <section id="panel-important-events" class="dashboard-panel panel-important-events" data-module="important-events"><header class="panel-header"><h2 class="panel-title">重要协同事件</h2><div class="panel-actions"></div></header><div class="panel-body events__list"><div class="chart-container"><div class="panel-placeholder">模块开发中<small>事件列表支持独立滚动</small></div></div></div></section>
+      <section id="panel-cooperation-network" class="dashboard-panel panel-cooperation-network" data-module="cooperation-network"><header class="panel-header"><h2 class="panel-title">协同合作网络</h2><div class="panel-actions"></div></header><div class="panel-body"><div class="chart-container"><div class="panel-placeholder panel-placeholder--network">模块开发中<small>合作网络将占据此区域的大部分可视空间</small></div></div></div></section>
+      <section id="panel-stage-share" class="dashboard-panel panel-stage-share" data-module="stage-share"><header class="panel-header"><h2 class="panel-title">分学段协同事件占比</h2><div class="panel-actions"></div></header><div class="panel-body"><div class="chart-container"><div class="panel-placeholder">模块开发中<small>分学段占比模块将接入此处</small></div></div></div></section>
+      <section id="panel-resource-overview" class="dashboard-panel panel-resource-overview" data-module="resource-overview"><header class="panel-header"><h2 class="panel-title">京津冀三地资源分布概览</h2><div class="panel-actions"></div></header><div class="panel-body"><div class="chart-container"><div class="panel-placeholder">模块开发中<small>资源分布概览模块将接入此处</small></div></div></div></section>
+    </section>
+  </main>
+  <script src="assets/echarts.min.js"></script>
+  <script src="js/module-loader.js"></script>
+  <script src="data/stage-share-data.js"></script>
+  <script src="modules/stage-share/stage-share.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
