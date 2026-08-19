@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>重要协同事件</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    .module-preview {
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: #031426;
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
+    }
+
+    .module-preview__frame {
+      width: 620px;
+      height: 300px;
+    }
+
+    .important-events {
+      --important-events-panel-bg: var(--panel-bg, rgba(3, 27, 50, 0.94));
+      --important-events-panel-border: var(--panel-border, rgba(0, 137, 255, 0.65));
+      --important-events-text-primary: var(--text-primary, #f2f7ff);
+      --important-events-text-secondary: var(--text-secondary, #b8c7d9);
+      --important-events-text-muted: var(--text-muted, #7e94ab);
+      --important-events-cyan: var(--cyan-main, #12c8ff);
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--important-events-panel-border);
+      border-radius: var(--radius-panel, 8px);
+      background: var(--important-events-panel-bg);
+      box-shadow: inset 0 1px 0 rgba(132, 219, 255, .08), 0 8px 30px rgba(0, 0, 0, .16);
+      color: var(--important-events-text-primary);
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
+    }
+
+    .important-events::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 76px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--important-events-cyan), transparent);
+      pointer-events: none;
+    }
+
+    .important-events__header {
+      height: 50px;
+      flex: 0 0 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 16px;
+      border-bottom: 1px solid rgba(112, 181, 220, .14);
+    }
+
+    .important-events__title {
+      margin: 0;
+      color: var(--important-events-text-primary);
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      line-height: 1;
+    }
+
+    .important-events__hint {
+      color: var(--important-events-text-muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .important-events__viewport {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      padding: 0 14px;
+    }
+
+    .important-events__track {
+      will-change: transform;
+    }
+
+    .important-events__item {
+      height: 62px;
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 2px;
+      border-bottom: 1px dashed rgba(111, 182, 221, .18);
+      color: inherit;
+      text-decoration: none;
+      transition: background-color .18s ease, transform .18s ease;
+    }
+
+    .important-events__item[href] {
+      cursor: pointer;
+    }
+
+    .important-events__item[href]:hover {
+      background: rgba(18, 200, 255, .055);
+      transform: translateX(2px);
+    }
+
+    .important-events__item[href]:hover .important-events__event-title {
+      color: #63dbff;
+    }
+
+    .important-events__item--disabled {
+      cursor: default;
+      opacity: .72;
+    }
+
+    .important-events__index {
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      border: 1px solid rgba(18, 200, 255, .38);
+      border-radius: 50%;
+      color: #74e2ff;
+      background: rgba(18, 200, 255, .07);
+      font: 700 11px/1 Consolas, monospace;
+    }
+
+    .important-events__content {
+      min-width: 0;
+    }
+
+    .important-events__event-title {
+      display: -webkit-box;
+      overflow: hidden;
+      margin: 0;
+      color: var(--important-events-text-primary);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.45;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      transition: color .18s ease;
+    }
+
+    .important-events__meta {
+      display: block;
+      overflow: hidden;
+      margin-top: 4px;
+      color: var(--important-events-text-muted);
+      font-size: 11px;
+      line-height: 1.35;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .important-events__date {
+      color: var(--important-events-text-secondary);
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .important-events__empty {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      color: var(--important-events-text-muted);
+      font-size: 14px;
+    }
+
+    .important-events__viewport::-webkit-scrollbar { width: 6px; }
+    .important-events__viewport::-webkit-scrollbar-track { background: rgba(255,255,255,.03); }
+    .important-events__viewport::-webkit-scrollbar-thumb {
+      background: rgba(0,145,255,.4);
+      border-radius: 6px;
+    }
+
+    @media (max-width: 560px) {
+      .module-preview__frame { width: 100%; }
+      .important-events__title { font-size: 18px; }
+      .important-events__hint { display: none; }
+      .important-events__item { grid-template-columns: 30px minmax(0, 1fr); }
+      .important-events__date { display: none; }
+    }
+  </style>
+</head>
+<body class="module-preview">
+  <main class="module-preview__frame">
+    <section id="important-events-root" class="important-events" aria-label="重要协同事件"></section>
+  </main>
+
+  <!-- 复用 dashboard 已有真实新闻数据：date / title / source / url / summary -->
+  <script src="../dashboard/data/news-data.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      const escapeHtml = value => String(value == null ? '' : value).replace(/[&<>'"]/g, char => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      }[char]));
+
+      const normalizeUrl = value => {
+        const url = String(value || '').trim();
+        if (!/^https?:\/\//i.test(url)) return '';
+        // 数据中偶有用中文分号拼接多个链接；默认只取第一个合法 URL。
+        return url.split(/[；;]/)[0].trim();
+      };
+
+      const ImportantEventsModule = {
+        root: null,
+        viewport: null,
+        track: null,
+        data: [],
+        timer: null,
+        resetTimer: null,
+        observer: null,
+        itemIndex: 0,
+        paused: false,
+        itemHeight: 62,
+        visibleCount: 4,
+        intervalMs: 1600,
+
+        init(container, data) {
+          this.destroy();
+          this.root = typeof container === 'string' ? document.querySelector(container) : container;
+          if (!this.root) return;
+
+          this.root.innerHTML = `
+            <header class="important-events__header">
+              <h2 class="important-events__title">重要协同事件</h2>
+              <span class="important-events__hint">悬停暂停 · 点击查看原文</span>
+            </header>
+            <div class="important-events__viewport" aria-live="polite"></div>
+          `;
+
+          this.viewport = this.root.querySelector('.important-events__viewport');
+          this.viewport.addEventListener('mouseenter', this._onMouseEnter);
+          this.viewport.addEventListener('mouseleave', this._onMouseLeave);
+
+          this.observer = new ResizeObserver(() => this.resize());
+          this.observer.observe(this.root);
+          this.update(data);
+        },
+
+        update(data) {
+          if (!this.viewport) return;
+
+          const source = Array.isArray(data) ? data : [];
+          // 当前源数据暂无“重要程度”字段，因此暂按日期倒序；后续可替换成 score/importance 排序。
+          this.data = source
+            .filter(item => item && item.title && item.date)
+            .slice()
+            .sort((a, b) => String(b.date).localeCompare(String(a.date)))
+            .slice(0, 12);
+
+          this._clearTimers();
+          this.itemIndex = 0;
+
+          if (!this.data.length) {
+            this.viewport.innerHTML = '<div class="important-events__empty">暂无事件数据</div>';
+            this.track = null;
+            return;
+          }
+
+          const html = this.data.map((item, index) => this._itemHtml(item, index)).join('');
+          // 与 dashboard 旧版一致：复制一份列表，实现无缝向上循环。
+          this.viewport.innerHTML = `<div class="important-events__track">${html}${html}</div>`;
+          this.track = this.viewport.firstElementChild;
+          this.resize();
+          this._start();
+        },
+
+        resize() {
+          if (!this.root || !this.viewport || !this.track) return;
+          const available = Math.max(1, this.viewport.clientHeight);
+          this.visibleCount = Math.max(1, Math.floor(available / this.itemHeight));
+          this.track.style.transform = `translateY(-${this.itemIndex * this.itemHeight}px)`;
+        },
+
+        destroy() {
+          this._clearTimers();
+          if (this.viewport) {
+            this.viewport.removeEventListener('mouseenter', this._onMouseEnter);
+            this.viewport.removeEventListener('mouseleave', this._onMouseLeave);
+          }
+          if (this.observer) this.observer.disconnect();
+          this.observer = null;
+          this.track = null;
+          this.viewport = null;
+          this.root = null;
+          this.data = [];
+          this.itemIndex = 0;
+          this.paused = false;
+        },
+
+        _itemHtml(item, index) {
+          const url = normalizeUrl(item.url);
+          const content = `
+            <span class="important-events__index">${String(index + 1).padStart(2, '0')}</span>
+            <div class="important-events__content">
+              <strong class="important-events__event-title">${escapeHtml(item.title)}</strong>
+              <small class="important-events__meta">${escapeHtml(item.source || '来源待补')}</small>
+            </div>
+            <time class="important-events__date" datetime="${escapeHtml(item.date)}">${escapeHtml(item.date)}</time>
+          `;
+
+          return url
+            ? `<a class="important-events__item" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" title="打开原文：${escapeHtml(item.title)}">${content}</a>`
+            : `<article class="important-events__item important-events__item--disabled" title="该事件暂无有效原文链接">${content}</article>`;
+        },
+
+        _start() {
+          if (!this.track || this.data.length <= 1) return;
+          this.timer = window.setInterval(() => this._move(), this.intervalMs);
+        },
+
+        _move() {
+          if (this.paused || !this.track || !this.data.length) return;
+          this.itemIndex += 1;
+          this.track.style.transition = 'transform .55s ease';
+          this.track.style.transform = `translateY(-${this.itemIndex * this.itemHeight}px)`;
+
+          if (this.itemIndex === this.data.length) {
+            this.resetTimer = window.setTimeout(() => {
+              if (!this.track) return;
+              this.track.style.transition = 'none';
+              this.track.style.transform = 'translateY(0)';
+              this.itemIndex = 0;
+            }, 580);
+          }
+        },
+
+        _clearTimers() {
+          if (this.timer) window.clearInterval(this.timer);
+          if (this.resetTimer) window.clearTimeout(this.resetTimer);
+          this.timer = null;
+          this.resetTimer = null;
+        },
+
+        _onMouseEnter: null,
+        _onMouseLeave: null
+      };
+
+      ImportantEventsModule._onMouseEnter = () => { ImportantEventsModule.paused = true; };
+      ImportantEventsModule._onMouseLeave = () => { ImportantEventsModule.paused = false; };
+
+      window.ImportantEventsModule = ImportantEventsModule;
+
+      document.addEventListener('DOMContentLoaded', () => {
+        ImportantEventsModule.init(
+          document.getElementById('important-events-root'),
+          window.JJJ_NEWS_DATA || []
+        );
+      });
+
+      window.addEventListener('pagehide', () => ImportantEventsModule.destroy(), { once: true });
+    }());
+  </script>
+</body>
+</html>
