@@ -1,0 +1,5 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>合作网络 · 京津冀教育协同发展监测平台</title><link rel="stylesheet" href="collaboration-network.css"><link rel="stylesheet" href="collaboration-network-theme.css"></head>
+<body class="module-preview"><main class="module-preview__frame" aria-label="合作网络独立预览"><section id="collab-network-root" class="module-root"></section></main><script src="collaboration-network.js"></script><script>fetch('./network_data.json').then(function(r){if(!r.ok)throw new Error('数据文件加载失败');return r.json()}).then(function(data){CollaborationNetworkModule.init(document.getElementById('collab-network-root'),data,{defaultYear:'2026'})}).catch(function(e){document.getElementById('collab-network-root').innerHTML='<div class="collab-network__load-error">合作网络数据加载失败。请通过本地 Web 服务打开此页面。<br><small>'+e.message+'</small></div>'})</script></body>
+</html>
