@@ -46,21 +46,6 @@
         DATA.annual[region] = DATA.annual[region].map(value => value / base * 100);
       });
       const root =`)
-      .replace(
-        /const W = 960, H = 430, L = 58, R = 24, T = 38, B = 54, pw = W - L - R, ph = H - T - B, n = DATA\.years\.length, x = i => L \+ \(i \+ \.5\) \* pw \/ n, y = v => T \+ ph - v \/ 100 \* ph;/,
-        'const W = 960, H = 430, L = 58, R = 50, T = 38, B = 54, pw = W - L - R, ph = H - T - B, n = DATA.years.length, chartMax = Math.max(100, Math.ceil(Math.max(...Object.values(DATA.annual).flat()) / 20) * 20), tickStep = chartMax / 5, x = i => L + (i + .5) * pw / n, y = v => T + ph - v / chartMax * ph;'
-      )
-      .replace(
-        /\[0, 20, 40, 60, 80, 100\]\.forEach\(v => \{[\s\S]*?\}\);/,
-        '[0, 0.2, 0.4, 0.6, 0.8, 1.0].forEach(v => {const sv = v * 100; svg.append(S("line", {x1: L, x2: W - R, y1: y(sv), y2: y(sv), class: "jjj-grid"}), S("text", {x: L - 12, y: y(sv) + 5, "text-anchor": "end", class: "jjj-axis"}, v.toFixed(1)))});'
-      )
-      .replace('const avg = DATA.years.map((_, i) => DATA.regions.reduce((s, r) => s + DATA.annual[r][i], 0) / 3);', `const _raw = DATA.years.map((_, i) => DATA.regions.map(r => DATA.annual[r][i]));
-      const cjt = _raw.map(v => { const m = v.reduce((s,x)=>s+x,0)/v.length; const sd = Math.sqrt(v.reduce((s,x)=>s+(x-m)**2,0)/v.length); return 1/(1+sd/m); });
-      const avg = cjt.map(v => v * 100);`)
-      .replace(
-        'avg.forEach((v, i) => {svg.append(S("rect", {x: x(i) - 16, y: y(v), width: 32, height: y(0) - y(v), rx: 3, fill: "url(#jjjBarGradient)", opacity: .84}), S("text", {x: x(i), y: y(v) - 8, "text-anchor": "middle", class: "jjj-bar-label"}, f(v)), S("text", {x: x(i), y: H - 22, "text-anchor": "middle", class: "jjj-year"}, DATA.years[i]))}',
-        'avg.forEach((v, i) => {svg.append(S("rect", {x: x(i) - 16, y: y(v), width: 32, height: y(0) - y(v), rx: 3, fill: "url(#jjjBarGradient)", opacity: .84}), S("text", {x: x(i), y: y(v) - 8, "text-anchor": "middle", class: "jjj-bar-label"}, (v/100).toFixed(2)), S("text", {x: x(i), y: H - 22, "text-anchor": "middle", class: "jjj-year"}, DATA.years[i]))};[0,20,40,60,80,100].forEach(v => {svg.append(S("text", {x: W - R + 8, y: y(v) + 5, "text-anchor": "start", fill: "#22c7c9", "font-size": "12px"}, v + "%"))})'
-      )
       .replaceAll('jjj-', 'collab-index-')
       .replaceAll('collab-index-education-dashboard', 'collab-index-dashboard');
     new Function(code)();
