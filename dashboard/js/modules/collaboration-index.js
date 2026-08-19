@@ -52,9 +52,9 @@
       )
       .replace(
         /\[0, 20, 40, 60, 80, 100\]\.forEach\(v => \{[\s\S]*?\}\);/,
-        '[0, 0.2, 0.4, 0.6, 0.8, 1.0].forEach(v => {const sv = v * 100; svg.append(S("line", {x1: L, x2: W - R, y1: y(sv), y2: y(sv), class: "jjj-grid"}), S("text", {x: L - 12, y: y(sv) + 5, "text-anchor": "end", class: "jjj-axis"}, v.toFixed(1)))})'
+        '[0, 0.2, 0.4, 0.6, 0.8, 1.0].forEach(v => {const sv = v * 100; svg.append(S("line", {x1: L, x2: W - R, y1: y(sv), y2: y(sv), class: "jjj-grid"}), S("text", {x: L - 12, y: y(sv) + 5, "text-anchor": "end", class: "jjj-axis"}, v.toFixed(1)))});'
       )
-      .replace('const avg =', `const _raw = DATA.years.map((_, i) => DATA.regions.map(r => DATA.annual[r][i]));
+      .replace('const avg = DATA.years.map((_, i) => DATA.regions.reduce((s, r) => s + DATA.annual[r][i], 0) / 3);', `const _raw = DATA.years.map((_, i) => DATA.regions.map(r => DATA.annual[r][i]));
       const cjt = _raw.map(v => { const m = v.reduce((s,x)=>s+x,0)/v.length; const sd = Math.sqrt(v.reduce((s,x)=>s+(x-m)**2,0)/v.length); return 1/(1+sd/m); });
       const avg = cjt.map(v => v * 100);`)
       .replace(
