@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>分学段协同事件占比 · 模块预览</title>
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/reset.css">
+  <link rel="stylesheet" href="../../css/panels.css">
+  <link rel="stylesheet" href="stage-share.css">
+  <style>
+    .module-preview { display:flex; min-height:100vh; align-items:center; justify-content:center; padding:24px; background:#031426; }
+    .module-preview__frame { width:620px; height:350px; }
+  </style>
+</head>
+<body>
+  <main class="module-preview">
+    <section id="panel-stage-share" class="dashboard-panel module-preview__frame" data-module="stage-share">
+      <header class="panel-header"><h2 class="panel-title">分学段协同事件占比</h2><div class="panel-actions"></div></header>
+      <div class="panel-body"><div class="chart-container"></div></div>
+    </section>
+  </main>
+  <script src="../../assets/echarts.min.js"></script>
+  <script src="../../js/module-loader.js"></script>
+  <script src="../../data/stage-share-data.js"></script>
+  <script src="stage-share.js"></script>
+  <script>DashboardModules.get('stage-share').init(document.getElementById('panel-stage-share'), window.STAGE_SHARE_DATA);</script>
+</body>
+</html>

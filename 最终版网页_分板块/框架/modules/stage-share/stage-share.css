@@ -1,0 +1,18 @@
+.stage-share__year-select {
+  min-width: 86px;
+  height: 28px;
+  padding: 0 25px 0 9px;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 13px;
+  line-height: 26px;
+  cursor: pointer;
+  background: rgba(4, 35, 66, .9);
+  border: 1px solid rgba(18, 200, 255, .52);
+  border-radius: 4px;
+  outline: none;
+}
+
+.stage-share__year-select:hover,
+.stage-share__year-select:focus { border-color: var(--cyan-main); box-shadow: 0 0 0 2px rgba(18, 200, 255, .12); }
+.stage-share__year-select option { color: var(--text-primary); background: #061b32; }
