@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>分学段协同事件占比</title>
+  <style>
+    :root { --bg-page:#031426; --panel-bg:rgba(3,27,50,.94); --panel-border:rgba(0,137,255,.65); --cyan:#12c8ff; --text:#f2f7ff; --sub:#b8c7d9; --grid:rgba(80,130,170,.18); }
+    .module-preview { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; box-sizing:border-box; background:var(--bg-page); font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif; }
+    .module-preview__frame { width:620px; height:350px; }
+    .module-root { width:100%; height:100%; min-width:0; min-height:0; }
+    .stage-share { width:100%; height:100%; overflow:hidden; color:var(--text); background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:8px; box-sizing:border-box; box-shadow:inset 0 0 18px rgba(0,102,204,.08); }
+    .stage-share__header { height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 14px 0 17px; border-bottom:1px solid var(--grid); box-sizing:border-box; }
+    .stage-share__title { margin:0; font-size:21px; font-weight:600; letter-spacing:.05em; }
+    .stage-share__select { height:28px; min-width:86px; padding:0 8px; color:var(--text); font:13px "Microsoft YaHei",sans-serif; background:#042342; border:1px solid rgba(18,200,255,.52); border-radius:4px; outline:none; }
+    .stage-share__body { height:calc(100% - 52px); padding:18px 24px 17px; box-sizing:border-box; }
+    .stage-share__chart { height:100%; display:flex; flex-direction:column; justify-content:space-around; }
+    .stage-share__row { display:grid; grid-template-columns:82px minmax(0,1fr) 58px; align-items:center; gap:12px; }
+    .stage-share__name { color:#d9e6f2; font-size:15px; font-weight:600; text-align:right; }
+    .stage-share__track { height:30px; overflow:hidden; background:rgba(67,116,156,.12); }
+    .stage-share__bar { height:100%; min-width:2px; transition:width .35s ease; }
+    .stage-share__value { color:var(--text); font-size:14px; font-weight:600; font-variant-numeric:tabular-nums; }
+    .stage-share__axis { display:grid; grid-template-columns:82px minmax(0,1fr) 58px; margin-top:7px; color:var(--sub); font-size:11px; }
+    .stage-share__ticks { display:flex; justify-content:space-between; border-top:1px solid rgba(160,190,220,.28); padding-top:5px; }
+    @media (max-width:540px) { .module-preview__frame { width:100%; } .stage-share__body { padding-left:12px; padding-right:12px; } .stage-share__row { grid-template-columns:72px minmax(0,1fr) 50px; gap:8px; } .stage-share__axis { grid-template-columns:72px minmax(0,1fr) 50px; } }
+  </style>
+</head>
+<body>
+  <main class="module-preview"><div class="module-preview__frame"><div id="module-root" class="module-root"></div></div></main>
+  <script>
+    const stageShareData = { order:['基础教育','高等教育','职业教育'], byYear:{ '2023':{'基础教育':7,'高等教育':34,'职业教育':7}, '2024':{'基础教育':9,'高等教育':41,'职业教育':9}, '2025':{'基础教育':3,'高等教育':34,'职业教育':15}, '2026':{'基础教育':5,'高等教育':25,'职业教育':4} } };
+    const StageShareModule = (() => {
+      const colors = { '基础教育':'#1368e8', '高等教育':'#16b8e8', '职业教育':'#68a84f' };
+      let host, data, selectedYear = '2026', observer;
+      function totals() { const years = selectedYear === '全部' ? Object.keys(data.byYear) : [selectedYear]; return data.order.map(name => ({ name, value:years.reduce((sum, year) => sum + (data.byYear[year][name] || 0), 0) })); }
+      function render() { const items = totals(), total = items.reduce((sum, item) => sum + item.value, 0); host.innerHTML = `<section class="stage-share" aria-label="分学段协同事件占比"><header class="stage-share__header"><h2 class="stage-share__title">分学段协同事件占比</h2><select class="stage-share__select" aria-label="筛选年份">${['2023','2024','2025','2026','全部'].map(year => `<option value="${year}" ${year === selectedYear ? 'selected' : ''}>${year === '全部' ? year : year + ' 年'}</option>`).join('')}</select></header><div class="stage-share__body"><div class="stage-share__chart">${items.map(item => { const share = total ? (item.value / total * 100).toFixed(1) : '0.0'; return `<div class="stage-share__row"><span class="stage-share__name">${item.name}</span><div class="stage-share__track"><div class="stage-share__bar" style="width:${share}%;background:${colors[item.name]}"></div></div><span class="stage-share__value">${share}%</span></div>`; }).join('')}</div><div class="stage-share__axis"><span></span><div class="stage-share__ticks"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div><span></span></div></div></section>`; host.querySelector('select').addEventListener('change', event => { selectedYear = event.target.value; render(); }); }
+      return { init(container, source = stageShareData) { host = container; data = source; render(); observer = new ResizeObserver(() => this.resize()); observer.observe(host); }, update(source) { data = source; render(); }, resize() {}, destroy() { observer?.disconnect(); host.innerHTML = ''; host = null; } };
+    })();
+    StageShareModule.init(document.getElementById('module-root'));
+  </script>
+</body>
+</html>
