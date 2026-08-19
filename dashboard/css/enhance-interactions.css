@@ -1,0 +1,238 @@
+/* ============================================================
+   jjJ-dashboard Enhancements – interaction & motion layer
+   ADDITIVE ONLY — no original layout, size, or content changes
+   ============================================================ */
+
+/* A. KPI CARD HOVER — glow border + visual lift via brightness (no layout shift) */
+.jjj-kpi-card {
+  transition:
+    border-color 0.35s cubic-bezier(.22,1,.36,1),
+    box-shadow 0.35s cubic-bezier(.22,1,.36,1),
+    filter 0.35s cubic-bezier(.22,1,.36,1);
+}
+.jjj-kpi-card:hover {
+  border-color: rgba(24, 200, 245, 0.5);
+  box-shadow:
+    inset 0 0 18px rgba(0, 146, 255, 0.11),
+    0 0 10px rgba(0, 112, 228, 0.15),
+    0 0 22px rgba(24, 200, 245, 0.18),
+    0 0 48px rgba(24, 200, 245, 0.07);
+  filter: brightness(1.06);
+}
+/* Variant glows */
+.jjj-kpi-card--events:hover {
+  border-color: rgba(0, 200, 202, 0.5);
+  box-shadow:
+    inset 0 0 18px rgba(0, 146, 255, 0.11),
+    0 0 10px rgba(0, 112, 228, 0.15),
+    0 0 22px rgba(0, 200, 202, 0.18),
+    0 0 48px rgba(0, 200, 202, 0.07);
+}
+.jjj-kpi-card--subjects:hover {
+  border-color: rgba(137, 85, 241, 0.5);
+  box-shadow:
+    inset 0 0 18px rgba(0, 146, 255, 0.11),
+    0 0 10px rgba(0, 112, 228, 0.15),
+    0 0 22px rgba(137, 85, 241, 0.18),
+    0 0 48px rgba(137, 85, 241, 0.07);
+}
+.jjj-kpi-card--relations:hover {
+  border-color: rgba(255, 172, 29, 0.5);
+  box-shadow:
+    inset 0 0 18px rgba(0, 146, 255, 0.11),
+    0 0 10px rgba(0, 112, 228, 0.15),
+    0 0 22px rgba(255, 172, 29, 0.18),
+    0 0 48px rgba(255, 172, 29, 0.07);
+}
+.jjj-kpi-card--regions:hover {
+  border-color: rgba(23, 107, 196, 0.5);
+}
+
+/* KPI icon micro-movement on hover */
+.jjj-kpi-card__icon {
+  transition: transform 0.4s cubic-bezier(.34,1.56,.64,1);
+}
+.jjj-kpi-card:hover .jjj-kpi-card__icon {
+  transform: scale(1.08);
+}
+
+/* KPI trend line glow pulse */
+@keyframes jjj-trend-pulse {
+  0%, 100% { filter: drop-shadow(0 0 2px rgba(0, 201, 242, 0.2)); stroke-opacity: 1; }
+  50% { filter: drop-shadow(0 0 7px rgba(0, 201, 242, 0.65)); stroke-opacity: 0.8; }
+}
+.jjj-kpi-card__trend {
+  animation: jjj-trend-pulse 3s ease-in-out infinite;
+}
+
+/* B. MODULE PANEL HOVER — border glow + depth */
+.jjj-module {
+  transition:
+    border-color 0.3s cubic-bezier(.22,1,.36,1),
+    box-shadow 0.3s cubic-bezier(.22,1,.36,1);
+}
+.jjj-module:hover {
+  border-color: rgba(70, 173, 225, 0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(132, 219, 255, 0.08),
+    0 8px 30px rgba(0, 0, 0, 0.18),
+    0 0 20px rgba(24, 200, 245, 0.1),
+    0 0 50px rgba(24, 200, 245, 0.05);
+}
+
+/* C. HEADER BREATHING UNDERLINE — position-based shimmer */
+@keyframes jjj-header-breathe {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+.jjj-dashboard__header {
+  background: linear-gradient(90deg,
+    rgba(104, 196, 237, 0.24),
+    rgba(24, 200, 245, 0.4),
+    rgba(104, 196, 237, 0.24),
+    rgba(24, 200, 245, 0.65),
+    rgba(104, 196, 237, 0.24));
+  background-size: 200% 100%;
+  animation: jjj-header-breathe 6s linear infinite;
+}
+
+/* D. KPI COUNT-UP — number glow while animating */
+@keyframes jjj-count-glow {
+  0% { text-shadow: 0 0 12px rgba(24, 200, 245, 0.6), 0 0 30px rgba(24, 200, 245, 0.2); }
+  100% { text-shadow: none; }
+}
+.jjj-enhance-counting {
+  animation: jjj-count-glow 1.2s cubic-bezier(.22,1,.36,1) forwards;
+}
+
+/* F. NEWS ITEM HOVER — background tint + left accent bar */
+.jjj-news-item {
+  transition:
+    background 0.25s ease,
+    transform 0.25s cubic-bezier(.22,1,.36,1),
+    border-color 0.25s ease,
+    padding-left 0.25s ease;
+  border-radius: 4px;
+  padding-left: 0;
+}
+.jjj-news-item:hover {
+  background: rgba(24, 200, 245, 0.05);
+  padding-left: 4px;
+}
+.jjj-news-item__tag {
+  transition: border-color 0.25s ease, color 0.25s ease;
+}
+.jjj-news-item:hover .jjj-news-item__tag {
+  border-color: rgba(43, 200, 245, 0.65);
+  color: #8ef0ff;
+}
+.jjj-news-item:hover strong {
+  color: #8ef0ff;
+}
+
+/* G. TOP EVENT HOVER — rank badge glow + background */
+.jjj-top-event {
+  transition: background 0.28s ease;
+  border-radius: 4px;
+}
+.jjj-top-event:hover {
+  background: rgba(24, 200, 245, 0.04);
+}
+.jjj-top-event__rank {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.jjj-top-event:hover .jjj-top-event__rank {
+  border-color: rgba(24, 200, 245, 0.8);
+  box-shadow: 0 0 10px rgba(24, 200, 245, 0.35);
+}
+
+/* H. KEYWORD CLOUD HOVER ENHANCEMENT */
+.jjj-keyword-cloud {
+  transition: filter 0.3s ease;
+}
+.jjj-keyword-cloud:hover {
+  filter: brightness(1.12) saturate(1.08);
+}
+
+/* I. DIMENSION ROW HOVER (activity map sidebar) */
+.jjj-activity-map__dimension-cell {
+  transition: background 0.25s ease;
+}
+.jjj-activity-map__dimension-grid:hover .jjj-activity-map__dimension-cell {
+  background: rgba(24, 200, 245, 0.04);
+}
+.jjj-activity-map__dimension-grid:hover .jjj-activity-map__dimension-cell--score {
+  color: #fff;
+}
+
+/* J. TIMELINE EVENT ITEM HOVER */
+.jjj-activity-timeline__event {
+  transition: background 0.25s ease;
+  border-radius: 3px;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+.jjj-activity-timeline__event:hover {
+  background: rgba(24, 200, 245, 0.05);
+}
+
+/* K. NETWORK DETAIL LINK PULSE */
+.jjj-network__detail-link {
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+.jjj-network__detail-link:hover {
+  color: #fff;
+  text-shadow: 0 0 9px rgba(24, 200, 245, 0.75);
+}
+
+/* L. REGION RING HOVER (KPI card) */
+.jjj-kpi-card__ring {
+  transition: box-shadow 0.35s ease;
+}
+.jjj-kpi-card--regions:hover .jjj-kpi-card__ring {
+  box-shadow: 0 0 14px rgba(37, 143, 228, 0.4);
+}
+
+/* M. MODULE TOP-ACCENT LINE SHIMMER ON HOVER */
+.jjj-module::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 70px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--jjj-cyan), transparent);
+  content: "";
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.jjj-module:hover::after {
+  opacity: 1;
+  animation: jjj-shimmer-line 2s ease-in-out infinite;
+}
+@keyframes jjj-shimmer-line {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* N. GLOBAL REDUCED MOTION SUPPORT */
+@media (prefers-reduced-motion: reduce) {
+  .jjj-kpi-card,
+  .jjj-module,
+  .jjj-news-item,
+  .jjj-top-event,
+  .jjj-kpi-card__icon,
+  .jjj-kpi-card__trend,
+  .jjj-kpi-card__ring,
+  .jjj-news-item__tag,
+  .jjj-activity-map__dimension-cell,
+  .jjj-activity-timeline__event,
+  .jjj-network__detail-link,
+  .jjj-keyword-cloud {
+    transition-duration: 0s !important;
+    animation: none !important;
+  }
+  .jjj-dashboard__header {
+    animation: none;
+  }
+}
