@@ -41,11 +41,20 @@
       #collab-index-host .collab-index-modal { z-index:1100; }
     </style>${root.outerHTML}`;
     const code = source.code
-      .replace('const root =', `DATA.regions.forEach(region => {
+      .replace('const root =', `// Compute Cjt from RAW data before normalization
+      const _cjtRaw = DATA.years.map((_, i) => DATA.regions.map(r => DATA.annual[r][i]));
+      const _cjtVals = _cjtRaw.map(v => { const m = v.reduce((s,x)=>s+x,0)/v.length; const sd = Math.sqrt(v.reduce((s,x)=>s+(x-m)**2,0)/v.length); return 1/(1+sd/m); });
+      DATA._cjtScaled = null; // set after chartMax
+      DATA.regions.forEach(region => {
         const base = DATA.annual[region][0];
         DATA.annual[region] = DATA.annual[region].map(value => value / base * 100);
       });
       const root =`)
+      .replace('const avg = DATA.years.map((_, i) => DATA.regions.reduce((s, r) => s + DATA.annual[r][i], 0) / 3);',
+        'DATA._cjtScaled = _cjtVals.map(v => v * chartMax);\n      const avg = DATA._cjtScaled;')
+      .replace(
+        'avg.forEach((v, i) => {svg.append(S("rect", {x: x(i) - 16, y: y(v), width: 32, height: y(0) - y(v), rx: 3, fill: "url(#jjjBarGradient)", opacity: .84}), S("text", {x: x(i), y: y(v) - 8, "text-anchor": "middle", class: "jjj-bar-label"}, f(v)), S("text", {x: x(i), y: H - 22, "text-anchor": "middle", class: "jjj-year"}, DATA.years[i]))});',
+        'avg.forEach((v, i) => {svg.append(S("rect", {x: x(i) - 16, y: y(v), width: 32, height: y(0) - y(v), rx: 3, fill: "url(#jjjBarGradient)", opacity: .84}), S("text", {x: x(i), y: y(v) - 8, "text-anchor": "middle", class: "jjj-bar-label"}, _cjtVals[i].toFixed(2)), S("text", {x: x(i), y: H - 22, "text-anchor": "middle", class: "jjj-year"}, DATA.years[i]))});\n      [0,20,40,60,80,100].forEach(v => {const pv = v / 100 * chartMax; svg.append(S("text", {x: W - R + 8, y: y(pv) + 5, "text-anchor": "start", fill: "#22c7c9", "font-size": "12px"}, v + "%"))});')
       .replaceAll('jjj-', 'collab-index-')
       .replaceAll('collab-index-education-dashboard', 'collab-index-dashboard');
     new Function(code)();
