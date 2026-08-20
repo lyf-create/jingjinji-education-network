@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>重要协同事件</title>
+  <title>重要协同事件（2026年）</title>
   <style>
     * { box-sizing: border-box; }
     .module-preview { min-height:100vh; margin:0; display:flex; align-items:center; justify-content:center; padding:24px; background:#031426; font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",Arial,sans-serif; }
@@ -29,7 +29,7 @@
   </style>
 </head>
 <body class="module-preview">
-  <main class="module-preview__frame"><section id="important-events-root" class="important-events" aria-label="重要协同事件"></section></main>
+  <main class="module-preview__frame"><section id="important-events-root" class="important-events" aria-label="重要协同事件（2026年）"></section></main>
   <script src="./important-events-data.js"></script>
   <script src="../dashboard/data/news-data.js"></script>
   <script>
@@ -39,7 +39,7 @@
       const normalizeUrl=value=>{const url=String(value||'').trim();if(!/^https?:\/\//i.test(url))return '';return url.split(/[；;]/)[0].trim();};
       const ImportantEventsModule={
         root:null,viewport:null,track:null,data:[],observer:null,animationFrame:null,paused:false,offset:0,lastTimestamp:null,itemHeight:62,speed:14,
-        init(container,data){this.destroy();this.root=typeof container==='string'?document.querySelector(container):container;if(!this.root)return;this.root.innerHTML='<header class="important-events__header"><h2 class="important-events__title">重要协同事件</h2></header><div class="important-events__viewport" aria-live="polite"></div>';this.viewport=this.root.querySelector('.important-events__viewport');this.viewport.addEventListener('mouseenter',this._onMouseEnter);this.viewport.addEventListener('mouseleave',this._onMouseLeave);this.observer=new ResizeObserver(()=>this.resize());this.observer.observe(this.root);this.update(data);},
+        init(container,data){this.destroy();this.root=typeof container==='string'?document.querySelector(container):container;if(!this.root)return;this.root.innerHTML='<header class="important-events__header"><h2 class="important-events__title">重要协同事件（2026年）</h2></header><div class="important-events__viewport" aria-live="polite"></div>';this.viewport=this.root.querySelector('.important-events__viewport');this.viewport.addEventListener('mouseenter',this._onMouseEnter);this.viewport.addEventListener('mouseleave',this._onMouseLeave);this.observer=new ResizeObserver(()=>this.resize());this.observer.observe(this.root);this.update(data);},
         update(data){if(!this.viewport)return;const source=Array.isArray(data)?data:[];this.data=source.filter(item=>item&&item.title&&item.date).slice().sort((a,b)=>(Number(b.score)||0)-(Number(a.score)||0)||String(b.date).localeCompare(String(a.date))).slice(0,12);this._stopAnimation();this.offset=0;this.lastTimestamp=null;if(!this.data.length){this.viewport.innerHTML='<div class="important-events__empty">暂无事件数据</div>';this.track=null;return;}const html=this.data.map((item,index)=>this._itemHtml(item,index)).join('');this.viewport.innerHTML=`<div class="important-events__track">${html}${html}</div>`;this.track=this.viewport.firstElementChild;this.resize();this._startAnimation();},
         resize(){if(this.track)this.track.style.transform=`translate3d(0,-${this.offset}px,0)`;},
         destroy(){this._stopAnimation();if(this.viewport){this.viewport.removeEventListener('mouseenter',this._onMouseEnter);this.viewport.removeEventListener('mouseleave',this._onMouseLeave);}if(this.observer)this.observer.disconnect();this.observer=null;this.track=null;this.viewport=null;this.root=null;this.data=[];this.offset=0;this.lastTimestamp=null;this.paused=false;},
