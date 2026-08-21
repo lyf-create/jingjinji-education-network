@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>京津冀三地资源分布概览</title>
+  <style>
+    :root {
+      --bg-page: #031426;
+      --panel-bg: rgba(5, 25, 47, .96);
+      --panel-bg-deep: #041a30;
+      --panel-border: rgba(0, 137, 255, .65);
+      --blue-main: #0867e8;
+      --blue-bright: #00a8ff;
+      --cyan-main: #12c8ff;
+      --text-primary: #ffffff;
+      --text-secondary: #e6edf7;
+      --text-muted: #a8b4c8;
+      --grid-line: rgba(80, 130, 170, .18);
+      --radius-panel: 8px;
+      --color-beijing: #ff8a1f;
+      --color-tianjin: #15b9e8;
+      --color-hebei: #6fa94f;
+      --color-jjj-total: #095fd6;
+    }
+
+    .module-preview {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      box-sizing: border-box;
+      background: var(--bg-page);
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
+    }
+
+    .module-preview__frame { width: 620px; height: 300px; }
+    .module-root { width: 100%; height: 100%; min-width: 0; min-height: 0; }
+
+    .resource-overview {
+      width: 100%; height: 100%; min-width: 0; min-height: 0;
+      box-sizing: border-box; overflow: hidden; position: relative;
+      padding: clamp(13px, 3.1%, 20px) clamp(10px, 2.4%, 15px) clamp(9px, 2.2%, 14px);
+      color: var(--text-primary); background: var(--panel-bg);
+      border: 1px solid rgba(46, 139, 218, .36); border-radius: var(--radius-panel);
+      box-shadow: inset 0 1px 0 rgba(174, 213, 255, .12);
+    }
+
+    .resource-overview::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse at 50% 28%, rgba(27, 87, 142, .16), transparent 65%);
+    }
+
+    .resource-overview__header, .resource-overview__body { position: relative; z-index: 1; }
+    .resource-overview__header { height: 28px; display: flex; align-items: flex-start; justify-content: space-between; }
+    .resource-overview__title { margin: 0; font-size: clamp(17px, 3.1vw, 22px); font-weight: 600; letter-spacing: 1px; line-height: 1.2; }
+    .resource-overview__more { color: var(--text-secondary); font-size: 13px; text-decoration: none; white-space: nowrap; }
+    .resource-overview__more::after { content: "›"; padding-left: 6px; font-size: 21px; line-height: 10px; vertical-align: -2px; }
+
+    .resource-overview__body { height: calc(100% - 28px); display: flex; flex-direction: column; }
+    /* 首列为地区名称的预留位；五个指标列与下方数值逐列严格对齐。 */
+    .resource-overview__metrics { display: grid; grid-template-columns: clamp(42px, 8%, 54px) repeat(5, minmax(0, 1fr)); margin-top: 15px; }
+    .resource-overview__metric { min-width: 0; text-align: center; padding: 6px clamp(3px, 1.2vw, 10px) 0; border-top: 1px solid color-mix(in srgb, var(--metric-color) 42%, transparent); }
+    .resource-overview__icon {
+      width: clamp(40px, 8.2vw, 56px); height: clamp(40px, 8.2vw, 56px); margin: 0 auto 6px;
+      display: grid; place-items: center; border-radius: 50%; color: #fff;
+      background: var(--metric-color);
+      box-shadow: inset 0 -2px 4px rgba(0, 0, 0, .18), inset 0 1px 1px rgba(255,255,255,.11);
+    }
+    .resource-overview__icon svg { width: 55%; height: 55%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .resource-overview__metric-name { min-height: 21px; color: var(--text-secondary); font-size: clamp(12px, 2.4vw, 17px); font-weight: 500; white-space: nowrap; }
+    .resource-overview__metric-total { margin-top: 4px; font-family: "Roboto Mono", "Cascadia Mono", "Microsoft YaHei", monospace; font-size: clamp(18px, 3.2vw, 25px); font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .resource-overview__metric-unit { margin-left: 3px; color: var(--text-muted); font-family: "Microsoft YaHei", sans-serif; font-size: clamp(10px, 1.55vw, 12px); font-weight: 400; vertical-align: baseline; }
+    .resource-overview__regions { flex: 1; min-height: 0; display: grid; grid-template-columns: clamp(42px, 8%, 54px) repeat(5, minmax(0, 1fr)); margin-top: 18px; }
+    .resource-overview__region-column { padding: 0 clamp(3px, 1.2vw, 10px); }
+    .resource-overview__region-column--labels { padding-left: 0; border-left: 0; }
+    .resource-overview__region-row { height: 24px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-family: "Roboto Mono", "Cascadia Mono", "Microsoft YaHei", monospace; font-size: clamp(12px, 2vw, 15px); line-height: 1; font-variant-numeric: tabular-nums; }
+    .resource-overview__region-row + .resource-overview__region-row { border-top: 1px solid rgba(148, 180, 214, .10); }
+    .resource-overview__region-column--labels .resource-overview__region-row { justify-content: flex-start; font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+    .resource-overview__region-name { flex: 0 0 auto; color: var(--text-secondary); }
+    .resource-overview__region-name::before { content: ""; display: inline-block; width: 5px; height: 5px; margin-right: 6px; border-radius: 50%; vertical-align: 2px; background: var(--region-color); }
+    .resource-overview__region-value { color: var(--text-muted); text-align: right; }
+    .resource-overview__region-row[data-region="北京"] { --region-color: var(--color-beijing); }
+    .resource-overview__region-row[data-region="天津"] { --region-color: var(--color-tianjin); }
+    .resource-overview__region-row[data-region="河北"] { --region-color: var(--color-hebei); }
+
+    @media (max-width: 500px) {
+      .resource-overview { padding-left: 10px; padding-right: 10px; }
+      .resource-overview__metric, .resource-overview__region-column { padding-left: 2px; padding-right: 2px; }
+      .resource-overview__region-row { height: 21px; }
+    }
+  </style>
+</head>
+<body class="module-preview">
+  <main class="module-preview__frame">
+    <div id="module-root" class="module-root"></div>
+  </main>
+
+  <script>
+    const resourceOverviewData = {
+      regions: ["北京", "天津", "河北"],
+      metrics: [
+        { key: "universities", name: "高校", unit: "所", color: "#1769c2", values: [92, 57, 129], icon: "university" },
+        { key: "schools", name: "中小学", unit: "所", color: "#238ad7", values: [1600, 1300, 17000], icon: "school" },
+        { key: "platforms", name: "科研平台", unit: "个", color: "#168d91", values: [320, 200, 260], icon: "network" },
+        { key: "nationalLabs", name: "国家实验室", unit: "个", color: "#237e85", values: [4, 1, 0], icon: "badge" },
+        { key: "keyLabs", name: "重点实验室", unit: "个", color: "#2c6872", values: [100, 20, 8], icon: "microscope" }
+      ]
+    };
+
+    const ResourceOverviewModule = (() => {
+      let host; let currentData; let observer;
+      const icons = {
+        university: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 12 16 5l13 7-13 7L3 12Z"/><path d="M7 14v9c4 3 14 3 18 0v-9M29 12v9"/></svg>',
+        school: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 27V12l11-7 11 7v15M12 27v-7h8v7M10 14h1M21 14h1M10 18h1M21 18h1"/></svg>',
+        network: '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="9" cy="9" r="3"/><circle cx="23" cy="10" r="3"/><circle cx="16" cy="23" r="3"/><path d="m11 11 3 9m7-8-3 8m-6-9 8-1"/></svg>',
+        badge: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 4 3 3 4-.2.8 3.8 3.2 2.4-2 3.5.7 4-3.8 1.5L20 27l-4-1.7L12 27l-2-3.5-3.9-1.5.8-4-2-3.5 3.2-2.4.8-3.8L13 7l3-3Z"/><path d="m16 11 1.5 3 3.3.5-2.4 2.3.6 3.2-3-1.6-3 1.6.6-3.2-2.4-2.3 3.3-.5 1.5-3Z"/></svg>',
+        microscope: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="m12 5 7 7-3 3-7-7 3-3ZM17 14l3 3a7 7 0 0 1-9 9M7 27h18M20 21h4M22 18v6"/></svg>'
+      };
+      const format = value => value === null || value === undefined ? "–" : Number(value).toLocaleString("zh-CN");
+      const render = () => {
+        const metrics = currentData.metrics;
+        host.innerHTML = `<section class="resource-overview" aria-label="京津冀三地资源分布概览">
+          <header class="resource-overview__header"><h2 class="resource-overview__title">京津冀三地资源分布概览</h2><a class="resource-overview__more" href="#more">更多</a></header>
+          <div class="resource-overview__body">
+            <div class="resource-overview__metrics"><div aria-hidden="true"></div>${metrics.map(metric => `<article class="resource-overview__metric" style="--metric-color:${metric.color}"><div class="resource-overview__icon">${icons[metric.icon]}</div><div class="resource-overview__metric-name">${metric.name}</div><div class="resource-overview__metric-total">${format(metric.values.reduce((total, value) => total + (value || 0), 0))}<span class="resource-overview__metric-unit">${metric.unit}</span></div></article>`).join("")}</div>
+            <div class="resource-overview__regions"><div class="resource-overview__region-column resource-overview__region-column--labels">${currentData.regions.map(region => `<div class="resource-overview__region-row" data-region="${region}"><span class="resource-overview__region-name">${region}</span></div>`).join("")}</div>${metrics.map(metric => `<div class="resource-overview__region-column">${currentData.regions.map((region, index) => `<div class="resource-overview__region-row"><span class="resource-overview__region-value">${format(metric.values[index])}</span></div>`).join("")}</div>`).join("")}</div>
+          </div>
+        </section>`;
+      };
+      return {
+        init(container, data = resourceOverviewData) { host = container; currentData = data; render(); observer = new ResizeObserver(() => this.resize()); observer.observe(host); },
+        update(data) { currentData = data; render(); },
+        resize() { /* CSS Grid 根据父容器自动重新排版；此处保留统一生命周期接口。 */ },
+        destroy() { if (observer) observer.disconnect(); observer = null; if (host) host.innerHTML = ""; host = null; }
+      };
+    })();
+
+    ResourceOverviewModule.init(document.getElementById("module-root"));
+  </script>
+</body>
+</html>
